@@ -85,7 +85,6 @@ The template will perform the following steps:
 #### Optional configuration
 
 * [devise][] can be added and configured directly using react
-* 
 
 ## React generator
 
@@ -110,3 +109,4 @@ It generates
 [xray-rails]: https://github.com/brentd/xray-rails
 [awesome-print]: https://github.com/michaeldv/awesome_print
 [table-print]: https://github.com/arches/table_print
+[devise]: https://github.com/plataformatec/devise
