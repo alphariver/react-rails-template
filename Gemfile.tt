@@ -16,7 +16,6 @@ gem 'uglifier', '>= 1.3.0'
 gem 'webpacker'
 gem 'react-rails', git: "https://github.com/reactjs/react-rails.git", branch: "master"
 gem 'fast_jsonapi'
-gem 'uglifier', '>= 1.3.0'
 
 group :development do
   gem 'bullet'

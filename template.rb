@@ -34,7 +34,6 @@ def apply_template!
     
         run 'bundle binstubs bundler --force'
     
-        run 'rails db:create db:migrate'
         run 'rails db:drop db:create db:migrate'
 
         setup_demo
@@ -61,15 +60,15 @@ def capistrano_app_name
 end
 
 def production_hostname
-    @production_hostname ||= ask_with_default("Production hostname?", :blue, "xxx.xxx.xxx.xxx")
+    @production_hostname ||= ask_with_default("Production hostname?", :blue, "127.0.0.1")
 end
 
 def app_domain
-    @app_domain ||= ask_with_default("What is the app domain for this project?", :blue, "skip", "example.com")
+    @app_domain ||= ask_with_default("What is the app domain for this project?", :blue, "example.com")
 end
 
 def ubuntu_user
-    @ubuntu_user ||= ask_with_default("What is the name of the ubuntu user?", :blue, "skip", "ubuntu")
+    @ubuntu_user ||= ask_with_default("What is the name of the ubuntu user?", :blue, "ubuntu")
 end
 
 def git_repo_url
@@ -78,6 +77,11 @@ end
 
 def git_repo_specified?
     git_repo_url != "skip" && !git_repo_url.strip.empty?
+end
+
+def preexisting_git_repo?
+    @preexisting_git_repo ||= (File.exist?(".git") || :nope)
+    @preexisting_git_repo == true
 end
 
 def any_local_git_commits?
@@ -129,7 +133,7 @@ end
 
 def setup_demo
     run 'rails g controller home index'
-    insert_into_file 'app/controllers/home_controller.rb', after: /^def index/ do
+    insert_into_file 'app/controllers/home_controller.rb', after: /^index/ do
         <<-RUBY
         to_react
         RUBY

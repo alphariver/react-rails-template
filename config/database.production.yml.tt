@@ -10,4 +10,4 @@ production:
   host: localhost
   database: <%= app_name %>_production
   username: postgres
-  password: <%= Rails.application.credentials.database_password %>
+  password: dbpassword #Rails.application.credentials.database_password
