@@ -37,6 +37,7 @@ def apply_template!
         run 'rails db:create db:migrate'
         run 'rails db:drop db:create db:migrate'
 
+        setup_demo
         setup_git
     end
 end
@@ -124,6 +125,16 @@ def setup_devise
     insert_into_file 'config/initializers/devise.rb', "  config.secret_key = Rails.application.credentials.secret_key_base\n", before: /^end/
     run 'rails g devise User'
     insert_into_file 'app/controllers/application_controller.rb', "  before_action :authenticate_user!\n", after: /exception\n/
+end
+
+def setup_demo
+    run 'rails g controller home index'
+    insert_into_file 'app/controllers/home_controller.rb', after: /^def index/ do
+        <<-RUBY
+        to_react
+        RUBY
+      end
+    run 'rails g react:component home/index'
 end
 
 def setup_git
