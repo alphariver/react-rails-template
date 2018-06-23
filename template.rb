@@ -18,6 +18,88 @@ def apply_template!
         insert_into_file 'Gemfile', "gem 'devise'\n", after: /'fast_jsonapi'\n/
         insert_into_file 'Gemfile', "gem 'devise-i18n'\n", after: /'fast_jsonapi'\n/
     end
+
+    copy_file "gitignore", ".gitignore", force: true
+    template "ruby-version.tt", ".ruby-version", force: true
+
+    apply 'app/template.rb'
+    apply 'config/template.rb'
+
+    bundle_gems
+
+end
+
+def apply_capistrano?
+    return @apply_capistrano if defined?(@apply_capistrano)
+    @apply_capistrano = \
+      ask_with_default("Use Capistrano for deployment?", :blue, "no") \
+      =~ /^y(es)?/i
+end
+
+def apply_devise?
+    return @apply_devise if defined?(@apply_devise)
+    @apply_devise = \
+      ask_with_default("Use Devise for user authentication?", :blue, "no") \
+      =~ /^y(es)?/i
+end
+
+def capistrano_app_name
+    app_name.gsub(/[^a-zA-Z0-9_]/, "_")
+end
+
+def production_hostname
+    @production_hostname ||= ask_with_default("Production hostname?", :blue, "xxx.xxx.xxx.xxx")
+end
+
+def app_domain
+    @app_domain ||= ask_with_default("What is the app domain for this project?", :blue, "skip", "example.com")
+end
+
+def ubuntu_user
+    @ubuntu_user ||= ask_with_default("What is the name of the ubuntu user?", :blue, "skip", "ubuntu")
+end
+
+def git_repo_url
+    @git_repo_url ||= ask_with_default("What is the git remote URL for this project?", :blue, "skip")
+end
+
+def git_repo_specified?
+    git_repo_url != "skip" && !git_repo_url.strip.empty?
+end
+
+def ask_with_default(question, color, default)
+    return default unless $stdin.tty?
+    question = (question.split("?") << " [#{default}]?").join
+    answer = ask(question, color)
+    answer.to_s.strip.empty? ? default : answer
+end
+
+def bundle_gems
+    setup_bullet
+    setup_erd
+    setup_devise if apply_devise?
+end
+
+def setup_bullet
+    insert_into_file 'config/environments/development.rb', before: /^end/ do
+      <<-RUBY
+    Bullet.enable = true
+    Bullet.alert = true
+      RUBY
+    end
+end
+
+def setup_erd
+    run 'rails g erd:install'
+    append_to_file '.gitignore', 'erd.pdf'
+end
+  
+def setup_devise
+    run 'rails generate devise:install'
+    run 'rails g devise:i18n:views'
+    insert_into_file 'config/initializers/devise.rb', "  config.secret_key = Rails.application.credentials.secret_key_base\n", before: /^end/
+    run 'rails g devise User'
+    insert_into_file 'app/controllers/application_controller.rb', "  before_action :authenticate_user!\n", after: /exception\n/
 end
 
 def assert_minimum_rails_version
