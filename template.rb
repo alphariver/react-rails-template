@@ -25,8 +25,20 @@ def apply_template!
     apply 'app/template.rb'
     apply 'config/template.rb'
 
-    bundle_gems
+    after_bundle do
+    
+        setup_front_end
+        setup_npm_packages
+    
+        setup_gems
+    
+        run 'bundle binstubs bundler --force'
+    
+        run 'rails db:create db:migrate'
+        run 'rails db:drop db:create db:migrate'
 
+        setup_git
+    end
 end
 
 def apply_capistrano?
@@ -67,6 +79,10 @@ def git_repo_specified?
     git_repo_url != "skip" && !git_repo_url.strip.empty?
 end
 
+def any_local_git_commits?
+    system("git log &> /dev/null")
+end
+
 def ask_with_default(question, color, default)
     return default unless $stdin.tty?
     question = (question.split("?") << " [#{default}]?").join
@@ -74,10 +90,18 @@ def ask_with_default(question, color, default)
     answer.to_s.strip.empty? ? default : answer
 end
 
-def bundle_gems
+def setup_front_end
+    run 'rails generate react:install'
+end
+
+def setup_npm_packages
+    run 'yarn add axios bootstrap reactstrap json-api-normalizer'
+end
+  
+def setup_gems
     setup_bullet
     setup_erd
-    setup_devise if apply_devise?
+    setup_devise
 end
 
 def setup_bullet
@@ -100,6 +124,20 @@ def setup_devise
     insert_into_file 'config/initializers/devise.rb', "  config.secret_key = Rails.application.credentials.secret_key_base\n", before: /^end/
     run 'rails g devise User'
     insert_into_file 'app/controllers/application_controller.rb', "  before_action :authenticate_user!\n", after: /exception\n/
+end
+
+def setup_git
+    git :init unless preexisting_git_repo?
+
+    unless any_local_git_commits?
+        git add: "-A ."
+        git commit: "-n -m 'Project initalized'"
+        if git_repo_specified?
+          git remote: "add origin #{git_repo_url.shellescape}"
+          git remote: "add upstream #{git_repo_url.shellescape}"
+          git push: "-u origin --all"
+        end
+    end
 end
 
 def assert_minimum_rails_version

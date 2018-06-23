@@ -1,11 +1,8 @@
-DOMAIN = "<%= app_domain %>" #Rails.application.credentials.domain
-USER = "<%= ubuntu_user %>"
+server "<%= production_hostname %>", user: "<%= ubuntu_user %>", roles: %w{app db web}
+set :nginx_server_name, "<%= app_domain %>"
+set :deploy_to, "/home/<%= ubuntu_user %>/rails/<%= app_name %>"
 
-server "<%= production_hostname %>", user: USER, roles: %w{app db web}
-set :nginx_server_name, "#{DOMAIN}"
-set :deploy_to, "/home/#{USER}/rails/#{app_name}"
-
-set :nginx_domains, "#{DOMAIN}"
+set :nginx_domains, "<%= app_domain %>"
 set :nginx_use_ssl, true
-set :nginx_ssl_certificate, "/etc/letsencrypt/live/#{DOMAIN}/fullchain.pem"
-set :nginx_ssl_certificate_key, "/etc/letsencrypt/live/#{DOMAIN}/privkey.pem"
+set :nginx_ssl_certificate, "/etc/letsencrypt/live/<%= app_domain %>/fullchain.pem"
+set :nginx_ssl_certificate_key, "/etc/letsencrypt/live/<%= app_domain %>/privkey.pem"
