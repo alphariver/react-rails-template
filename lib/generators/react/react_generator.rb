@@ -17,7 +17,7 @@ class ReactGenerator < Rails::Generators::Base
   
     def generate_action
       if "#{controller_name.classify}Controller".constantize.methods.include?(action_name)
-  
+        ap "You should add 'to_react' with props into your already existing #{action_name} action of #{controller_name} controller."
       else
         inject_into_file @controller_path, after: "def #{action_name}" do
   <<-RUBY

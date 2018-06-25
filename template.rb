@@ -25,6 +25,7 @@ def apply_template!
 
     apply 'app/template.rb'
     apply 'config/template.rb'
+    apply 'lib/template.rb'
 
     run  "gem install bundler --no-document --conservative"
     run  "bundle install"
@@ -117,8 +118,11 @@ def setup_react
     rails_command "webpacker:install"
     rails_command "webpacker:install:react"
     generate "react:install"
+    setup_components
     setup_demo
 end
+
+def setup_components
 
 def setup_demo
     generate "controller", "home index"
