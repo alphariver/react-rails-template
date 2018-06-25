@@ -137,19 +137,20 @@ sudo service nginx stop
 ```
 
 > debug : Command /opt/eff.org/certbot/venv/bin/python2.7 - setuptools pkg_resources pip
-```bash
-sudo apt-get install letsencrypt
-nano /etc/default/locale
-#  Paste below 4 lines.
-LANG="en_US.UTF-8"
-LC_CTYPE="en_US.UTF-8"
-LC_ALL="en_US.UTF-8"
-LANGUAGE="en_US.UTF-8"
-```
+> ```bash
+> sudo apt-get install letsencrypt
+> nano /etc/default/locale
+> #  Paste below 4 lines.
+> LANG="en_US.UTF-8"
+> LC_CTYPE="en_US.UTF-8"
+> LC_ALL="en_US.UTF-8"
+> LANGUAGE="en_US.UTF-8"
+> ```
+
 > debug : Problem binding to port 80: Could not bind to IPv4 or IPv6
-```bash
-sudo service nginx stop
-```
+> ```bash
+> sudo service nginx stop
+> ```
 
 4. Deploy !
 ```bash
