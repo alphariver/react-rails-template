@@ -12,7 +12,8 @@ class App extends Component {
     return (
         <div className="container">
             {this.props.children}
-            <DevView props={this.props.appProps} />
+            {(!process.env.NODE_ENV || process.env.NODE_ENV === 'development') ?
+            <DevView props={this.props.appProps} /> : null}
         </div>
     )
   }

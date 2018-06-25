@@ -27,6 +27,7 @@ group :development do
   gem 'spring-watcher-listen', '~> 2.0.0'
   gem "xray-rails", ">= 0.1.18"
   gem "better_errors"
+  gem "binding_of_caller"
 end
 
 group :development, :test do
@@ -35,11 +36,11 @@ group :development, :test do
 end
 
 <% if apply_capistrano? -%>
-  gem 'capistrano-rbenv', '~> 2.0'
-  gem 'capistrano-rbenv-install', '~> 1.2.0'
-  gem 'capistrano-rails', group: :development
-  gem 'capistrano3-puma' , group: :development
-  gem 'capistrano-upload-config'
-  gem 'capistrano3-nginx', '~> 2.0'
-  gem 'capistrano-rails-collection'
+gem 'capistrano-rbenv', '~> 2.0'
+gem 'capistrano-rbenv-install', '~> 1.2.0'
+gem 'capistrano-rails', group: :development
+gem 'capistrano3-puma' , group: :development
+gem 'capistrano-upload-config'
+gem 'capistrano3-nginx', '~> 2.0'
+gem 'capistrano-rails-collection'
 <% end -%> 

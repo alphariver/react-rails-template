@@ -67,7 +67,7 @@ The template will perform the following steps:
 * Change the default generators config (cf config/initializers/generators.rb)
 * Setup I18n for English and Korean
 * Setup React folder structures with some out of box demo using [reactstrap][].
-* React specific generator, `rails g react posts`. See Next section for information.
+* React specific generator, `rails g react posts index`. See Next section for information.
 * Improve the main layout (cf app/views/layouts/application.html.erb) to include webpack in the asset pipeline
 * Create a basic home_controller.rb to have something to show when the app launch
 * Create a basic HomeIndex.jsx to have something to show when the app launch
@@ -88,12 +88,51 @@ The template will perform the following steps:
 
 I have added react specific generator task.
 
-with `rails g react:pages home/index
+with `rails g react posts index`
 
 It generates
 
-* `app/react/pages/home/Index.js` with simple rendered props as json.
-* add react related codes to `app/controllers/home_controller.rb`'s index action. (created controller and action if they don't exist)
+* `app/javascript/components/pages/Index.js` with simple rendered props as json.
+* Custom JSON viewer is setted for development environment. (You can disable it from javascript/components/commons/App.js)
+* Create `posts_controller.rb` if not present.
+* Add render helpers to matching index action of posts controller.
+
+## Deployment Procedure
+
+1. modify your database.production.yml
+```yml
+default: &default
+  adapter: postgresql
+  encoding: utf8
+  # For details on connection pooling, see Rails configuration guide
+  # http://guides.rubyonrails.org/configuring.html#database-pooling
+  pool: 5
+
+production:
+  <<: *default
+  host: localhost
+  database: blog_production
+  username: postgres
+  password: <%= Rails.application.credentials.database_password %>
+```
+
+2. Add database_password credential from your favorite editor. (ex. nano)
+```bash
+EDITOR=nano rails credentials:edit
+```
+
+3. Go to your remote server and create `blog_production` database.
+```bash
+sudo -i -u postgres
+createdb blog_production
+```
+
+4. Deploy !
+```bash
+cap production doctor
+cap production deploy:check
+cap production deploy
+```
 
 [mattbricson]: https://github.com/mattbrictson/rails-template
 [damienlethiec]: https://github.com/damienlethiec/modern-rails-template

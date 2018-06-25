@@ -26,5 +26,7 @@
 
 # Never check passwords into source control!
 /config/database.yml
+/config/database.production.yml
 /config/master.key
+/config/master.production.key
 /.env

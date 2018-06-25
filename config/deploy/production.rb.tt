@@ -3,6 +3,8 @@ set :nginx_server_name, "<%= app_domain %>"
 set :deploy_to, "/home/<%= ubuntu_user %>/rails/<%= app_name %>"
 
 set :nginx_domains, "<%= app_domain %>"
+<% if apply_ssl? %>
 set :nginx_use_ssl, true
 set :nginx_ssl_certificate, "/etc/letsencrypt/live/<%= app_domain %>/fullchain.pem"
 set :nginx_ssl_certificate_key, "/etc/letsencrypt/live/<%= app_domain %>/privkey.pem"
+<% end %>

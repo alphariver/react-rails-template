@@ -48,6 +48,13 @@ def apply_capistrano?
       =~ /^y(es)?/i
 end
 
+def apply_ssl?
+    return @apply_ssl if defined?(@apply_ssl)
+    @apply_devise = \
+      ask_with_default("Apply SSL for deployment?", :blue, "no") \
+      =~ /^y(es)?/i
+end
+
 def apply_devise?
     return @apply_devise if defined?(@apply_devise)
     @apply_devise = \
@@ -123,16 +130,11 @@ def setup_react
 end
 
 def setup_components
+    apply 'app/component_template.rb'
+end
 
 def setup_demo
-    generate "controller", "home index"
-    inject_into_file 'app/controllers/home_controller.rb', after: "def index" do
-        "\n    to_react"
-    end
-    generate "react:component", "home/index"
-    inject_into_file 'app/javascript/components/home/Index.js', after: "<React.Fragment>" do
-        "\n        <h1>Hello React, from app/javascript/components/home/Index.js</h1>"
-    end
+    generate "react home index"
 end
 
 def setup_erd
@@ -145,7 +147,6 @@ def setup_devise
     generate "devise:i18n:views"
     insert_into_file 'config/initializers/devise.rb', "  config.secret_key = Rails.application.credentials.secret_key_base\n", before: /^end/
     generate "devise", "User"
-    insert_into_file 'app/controllers/application_controller.rb', "  before_action :authenticate_user!\n", after: /exception\n/
 end
 
 def setup_git
