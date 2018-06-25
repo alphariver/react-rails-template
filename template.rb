@@ -105,7 +105,7 @@ def setup_gems
 end
 
 def setup_bullet
-    insert_into_file 'config/environments/development.rb', before: /^end/ do
+    inject_into_file 'config/environments/development.rb', before: /^end/ do
       <<-RUBY
         Bullet.enable = true
         Bullet.alert = true
@@ -118,7 +118,6 @@ def setup_react
     rails_command "webpacker:install:react"
     generate "react:install"
     setup_demo
-    #run "RAILS_ENV=development bundle exec rails webpacker:compile"
 end
 
 def setup_demo
@@ -197,6 +196,7 @@ def gemfile_requirement(name)
 end
 
 def run_bundle 
+    run 'bin/spring stop'
     p "Template setted." 
     return
 end

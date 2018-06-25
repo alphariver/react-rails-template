@@ -21,7 +21,6 @@ To make this the default Rails application template on your system, create a `~/
 
 ```
 -d postgresql
---webpack=react
 -m https://raw.githubusercontent.com/astrocket/react-rails-template/master/template.rb
 ```
 
@@ -37,9 +36,8 @@ To generate a Rails application using this template, pass the `-m` option to `ra
 ```
 rails new blog \
   --skip-coffee \
-  --webpack=react \
+  --skip-test-unit \
   -d postgresql \
-  -T \
   -m https://raw.githubusercontent.com/astrocket/react-rails-template/master/template.rb
 ```
 
