@@ -127,12 +127,40 @@ sudo -i -u postgres
 createdb blog_production
 ```
 
+3-1. Get SSL certificate from Let's encrypt
+```bash
+git clone https://github.com/letsencrypt/letsencrypt
+cd letsencrypt
+./letsencrypt-auto --help
+sudo service nginx stop
+./letsencrypt-auto certonly --standalone -d yoursite.com
+```
+
+> debug : Command /opt/eff.org/certbot/venv/bin/python2.7 - setuptools pkg_resources pip
+```bash
+sudo apt-get install letsencrypt
+nano /etc/default/locale
+#  Paste below 4 lines.
+LANG="en_US.UTF-8"
+LC_CTYPE="en_US.UTF-8"
+LC_ALL="en_US.UTF-8"
+LANGUAGE="en_US.UTF-8"
+```
+> debug : Problem binding to port 80: Could not bind to IPv4 or IPv6
+```bash
+sudo service nginx stop
+```
+
 4. Deploy !
 ```bash
 cap production doctor
 cap production deploy:check
 cap production deploy
 ```
+
+## Todo
+* Automate SSL cerfication generation
+* Automate Capistrano database creation
 
 [mattbricson]: https://github.com/mattbrictson/rails-template
 [damienlethiec]: https://github.com/damienlethiec/modern-rails-template
