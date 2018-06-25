@@ -10,6 +10,7 @@ def apply_template!
     add_template_repository_to_source_path
 
     template "Gemfile.tt", force: true
+
     if apply_capistrano?
         copy_file "Capfile"
     end
@@ -25,16 +26,18 @@ def apply_template!
     apply 'app/template.rb'
     apply 'config/template.rb'
 
-    after_bundle do
-        setup_npm_packages
-    
-        setup_gems
+    run  "gem install bundler --no-document --conservative"
+    run  "bundle install"
+    run  "bin/yarn install" if File.exist?("yarn.lock")
 
-        run "bundle binstubs bundler --force"
-        run 'rails db:drop db:create db:migrate'
+    setup_gems
+    setup_npm_packages
+    setup_react
 
-        setup_git
-    end
+    run "bundle binstubs bundler --force"
+    run 'rails db:drop db:create db:migrate'
+
+    setup_git
 end
 
 def apply_capistrano?
@@ -98,8 +101,6 @@ end
 def setup_gems
     setup_bullet
     setup_erd
-    setup_react
-    setup_demo
     setup_devise if apply_devise?
 end
 
@@ -112,28 +113,35 @@ def setup_bullet
     end
 end
 
-def setup_erd
-    run 'rails g erd:install'
-    append_to_file '.gitignore', 'erd.pdf'
-end
-
 def setup_react
-    run 'rails generate react:install'
+    rails_command "webpacker:install"
+    rails_command "webpacker:install:react"
+    generate "react:install"
+    setup_demo
+    #run "RAILS_ENV=development bundle exec rails webpacker:compile"
 end
 
 def setup_demo
-    run 'rails g controller home index'
+    generate "controller", "home index"
     inject_into_file 'app/controllers/home_controller.rb', after: "def index" do
         "\n    to_react"
-      end
-    run 'rails g react:component home/index'
+    end
+    generate "react:component", "home/index"
+    inject_into_file 'app/javascript/components/home/Index.js', after: "<React.Fragment>" do
+        "\n        <h1>Hello React, from app/javascript/components/home/Index.js</h1>"
+    end
+end
+
+def setup_erd
+    generate "erd:install"
+    append_to_file '.gitignore', 'erd.pdf'
 end
 
 def setup_devise
-    run 'rails generate devise:install'
-    run 'rails g devise:i18n:views'
+    generate "devise:install"
+    generate "devise:i18n:views"
     insert_into_file 'config/initializers/devise.rb', "  config.secret_key = Rails.application.credentials.secret_key_base\n", before: /^end/
-    run 'rails g devise User'
+    generate "devise", "User"
     insert_into_file 'app/controllers/application_controller.rb', "  before_action :authenticate_user!\n", after: /exception\n/
 end
 
@@ -186,6 +194,11 @@ def gemfile_requirement(name)
     @original_gemfile ||= IO.read("Gemfile")
     req = @original_gemfile[/gem\s+['"]#{name}['"]\s*(,[><~= \t\d\.\w'"]*)?.*$/, 1]
     req && req.gsub("'", %(")).strip.sub(/^,\s*"/, ', "')
+end
+
+def run_bundle 
+    p "Template setted." 
+    return
 end
 
 apply_template!
