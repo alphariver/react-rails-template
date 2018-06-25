@@ -1,0 +1,12 @@
+Description:
+    React Page Generator.
+
+Example:
+    rails generate react posts index
+
+    This will create:
+        app/javascripts/components/posts/Index.jsx
+    And create or modify index action of posts_controller.rb
+        app/controllers/posts_controller.rb
+        add some sample renderer to index action.
+        

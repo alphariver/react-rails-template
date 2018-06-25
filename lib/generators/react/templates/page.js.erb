@@ -1,0 +1,23 @@
+import React, { Component } from "react"
+import App from "../commons/App.js"
+import {
+
+} from "../commons/index.js"
+
+class <%= action_name.capitalize %> extends Component {
+
+  constructor(props) {
+    super(props)
+  }
+
+  render () {
+    const { data, header } = this.props;
+    return (
+      <App appProps={this.props}>
+        <h1>{data.helloReact}</h1>
+      </App>
+    );
+  }
+}
+
+export default <%= action_name.capitalize %>
