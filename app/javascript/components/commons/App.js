@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { DevView } from './index.js'
 import 'babel-polyfill'
 import 'babel-polyfill'
-import 'bootstrap/dist/css/bootstrap.min.css';
+import 'stylesheets/bootstrap/bootstrap.min.css';
 
 class App extends Component {
 

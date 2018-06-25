@@ -135,6 +135,7 @@ def setup_components
 end
 
 def setup_demo
+    copy_file "config/webpacker.yml"
     generate "react home index"
 end
 
