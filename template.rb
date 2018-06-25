@@ -105,7 +105,7 @@ end
 def setup_npm_packages
     run 'yarn add axios bootstrap reactstrap json-api-normalizer'
 end
-  
+
 def setup_gems
     setup_bullet
     setup_erd
@@ -127,6 +127,7 @@ def setup_react
     generate "react:install"
     setup_components
     setup_demo
+    setup_bootstrap
 end
 
 def setup_components
@@ -135,6 +136,10 @@ end
 
 def setup_demo
     generate "react home index"
+end
+
+def setup_bootstrap
+    run 'cp -R node_modules/bootstrap/dist/css/ app/assets/stylesheets/bootstrap'
 end
 
 def setup_erd
