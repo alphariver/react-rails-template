@@ -27,6 +27,10 @@ def apply_template!
     apply 'config/template.rb'
     apply 'lib/template.rb'
 
+    if apply_reactstrap?
+
+    end
+
     run  "gem install bundler --no-document --conservative"
     run  "bundle install"
     run  "bin/yarn install" if File.exist?("yarn.lock")
@@ -38,7 +42,7 @@ def apply_template!
     run "bundle binstubs bundler --force"
     run 'rails db:drop db:create db:migrate'
 
-    setup_git
+    git_push
 end
 
 def apply_capistrano?
@@ -59,6 +63,13 @@ def apply_devise?
     return @apply_devise if defined?(@apply_devise)
     @apply_devise = \
       ask_with_default("Use Devise for user authentication?", :blue, "no") \
+      =~ /^y(es)?/i
+end
+
+def apply_reactstrap?
+    return @apply_reactstrap if defined?(@apply_reactstrap)
+    @apply_reactstrap = \
+      ask_with_default("Use React Bootstrap for react generator? (with base predefined components)", :blue, "no") \
       =~ /^y(es)?/i
 end
 
@@ -91,10 +102,6 @@ def preexisting_git_repo?
     @preexisting_git_repo == true
 end
 
-def any_local_git_commits?
-    system("git log &> /dev/null")
-end
-
 def ask_with_default(question, color, default)
     return default unless $stdin.tty?
     question = (question.split("?") << " [#{default}]?").join
@@ -103,7 +110,9 @@ def ask_with_default(question, color, default)
 end
 
 def setup_npm_packages
-    run 'yarn add axios bootstrap reactstrap json-api-normalizer'
+    npms = %w(axios json-api-normalizer)
+    npms.push("bootstrap", "reactstrap") if apply_reactstrap
+    run "yarn add #{npms}"
 end
 
 def setup_gems
@@ -119,33 +128,45 @@ def setup_bullet
         Bullet.alert = true
       RUBY
     end
+    git_commit("Bullet setup")
 end
 
 def setup_react
     rails_command "webpacker:install"
     rails_command "webpacker:install:react"
     generate "react:install"
-    setup_components
+    copy_file "config/webpacker.yml"
+    git_commit("React setup")
+
+    setup_component
+    setup_reactstrap if apply_reactstrap?
     setup_demo
-    setup_bootstrap
 end
 
-def setup_components
+def setup_component
     apply 'app/component_template.rb'
+    git_commit("Base components setup")
+end
+
+def setup_reactstrap
+    run 'cp -R node_modules/bootstrap/dist/css/ app/assets/stylesheets/bootstrap'
+    inject_into_file 'app/javascript/components/commons/App.js', after: "import 'babel-polyfill'" do
+        <<-ERB
+        import 'stylesheets/bootstrap/bootstrap.min.css';
+        ERB
+    end
+    git_commit("Reactstrap setup")
 end
 
 def setup_demo
-    copy_file "config/webpacker.yml"
     generate "react home index"
-end
-
-def setup_bootstrap
-    run 'cp -R node_modules/bootstrap/dist/css/ app/assets/stylesheets/bootstrap'
+    git_commit("Basic demo controller & component setup")
 end
 
 def setup_erd
     generate "erd:install"
     append_to_file '.gitignore', 'erd.pdf'
+    git_commit("Erd setup")
 end
 
 def setup_devise
@@ -153,19 +174,25 @@ def setup_devise
     generate "devise:i18n:views"
     insert_into_file 'config/initializers/devise.rb', "  config.secret_key = Rails.application.credentials.secret_key_base\n", before: /^end/
     generate "devise", "User"
+    git_commit("Devise installed and configured")
 end
 
-def setup_git
+def git_commit(msg)
     git :init unless preexisting_git_repo?
 
-    unless any_local_git_commits?
-        git add: "-A ."
-        git commit: "-n -m 'Project initalized'"
-        if git_repo_specified?
-          git remote: "add origin #{git_repo_url.shellescape}"
-          git remote: "add upstream #{git_repo_url.shellescape}"
-          git push: "-u origin --all"
-        end
+    git add: "-A ."
+    git commit: "-n -m '#{msg}'"
+end
+
+def git_push
+    git :init unless preexisting_git_repo?
+
+    git add: "-A ."
+    git commit: "-n -m 'Project initalized'"
+    if git_repo_specified?
+      git remote: "add origin #{git_repo_url.shellescape}"
+      git remote: "add upstream #{git_repo_url.shellescape}"
+      git push: "-u origin --all"
     end
 end
 
