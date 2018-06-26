@@ -6,7 +6,7 @@ class ReactGenerator < Rails::Generators::Base
   
     def set_up
       @controller_path = "app/controllers/#{controller_name}_controller.rb"
-      @jsx_path = "app/javascript/components/#{controller_name}/#{action_name.capitalize}.jsx"
+      @jsx_path = "app/javascript/components/#{controller_name}/#{action_name..split('_').collect(&:capitalize).join}.jsx"
     end
   
     def generate_controller
@@ -16,7 +16,7 @@ class ReactGenerator < Rails::Generators::Base
     end
   
     def generate_action
-      if "#{controller_name.capitalize}Controller".constantize.methods.include?(action_name)
+      if "#{controller_name.split('_').collect(&:capitalize).join}Controller".constantize.methods.include?(action_name)
         ap "You should add 'to_react' with props into your already existing #{action_name} action of #{controller_name} controller."
       else
         inject_into_file @controller_path, after: "def #{action_name}" do

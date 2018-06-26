@@ -1,7 +1,6 @@
 import React from 'react'
 
 const JsonView = ({jkey, object}) => {
-    console.log(jkey)
     return (
         <div>
             <h4>{`props.${jkey}`}</h4>
@@ -20,7 +19,7 @@ const DevView = ({props}) => {
     return (
         <div style={styles.container}>
             {Object.keys(props).map((key) => {
-                return <JsonView jkey={key} object={props[key]} />;
+                return <JsonView key={key} jkey={key} object={props[key]} />;
             })}
         </div>
     )
@@ -35,8 +34,8 @@ const styles = {
         left: '0px',
         borderTop: '1px solid #ebebeb',
         borderRight: '1px solid #ebebeb',
-        padding: '0px 20px',
-        width: 'calc(100vw - 40px)',
+        padding: '20px',
+        width: '100vw',
         height: '20vh',
         maxHeight: '20vh',
         overflowY: 'scroll'

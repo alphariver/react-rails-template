@@ -1,10 +1,11 @@
 import React, { Component } from "react"
-import App from "../commons/App.js"
+import App from "../commons/App.jsx"
+import axios from 'axios'
 import {
 
 } from "../commons/index.js"
 
-class <%= action_name.capitalize %> extends Component {
+class <%= action_name.classify %> extends Component {
 
   constructor(props) {
     super(props)
@@ -20,4 +21,4 @@ class <%= action_name.capitalize %> extends Component {
   }
 }
 
-export default <%= action_name.capitalize %>
+export default <%= action_name.classify %>

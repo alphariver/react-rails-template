@@ -28,7 +28,9 @@ def apply_template!
     apply 'lib/template.rb'
 
     if apply_reactstrap?
-
+        p "################################################################"
+        p "##### Every options are answered. Come back in 3 minutes ! #####"
+        p "################################################################"
     end
 
     run  "gem install bundler --no-document --conservative"
@@ -111,8 +113,8 @@ end
 
 def setup_npm_packages
     npms = %w(axios json-api-normalizer)
-    npms.push("bootstrap", "reactstrap") if apply_reactstrap
-    run "yarn add #{npms}"
+    npms.push("bootstrap", "reactstrap") if apply_reactstrap?
+    run "yarn add #{npms.join(' ')}"
 end
 
 def setup_gems
@@ -135,7 +137,7 @@ def setup_react
     rails_command "webpacker:install"
     rails_command "webpacker:install:react"
     generate "react:install"
-    copy_file "config/webpacker.yml"
+    copy_file "config/webpacker.yml", force: true
     git_commit("React setup")
 
     setup_component
@@ -150,11 +152,6 @@ end
 
 def setup_reactstrap
     run 'cp -R node_modules/bootstrap/dist/css/ app/assets/stylesheets/bootstrap'
-    inject_into_file 'app/javascript/components/commons/App.js', after: "import 'babel-polyfill'" do
-        <<-ERB
-        import 'stylesheets/bootstrap/bootstrap.min.css';
-        ERB
-    end
     git_commit("Reactstrap setup")
 end
 
