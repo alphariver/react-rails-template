@@ -27,7 +27,7 @@ def apply_template!
     apply 'config/template.rb'
     apply 'lib/template.rb'
 
-    if apply_reactstrap?
+    if apply_ui_template?
         p "################################################################"
         p "##### Every options are answered. Come back in 3 minutes ! #####"
         p "################################################################"
@@ -68,11 +68,8 @@ def apply_devise?
       =~ /^y(es)?/i
 end
 
-def apply_reactstrap?
-    return @apply_reactstrap if defined?(@apply_reactstrap)
-    @apply_reactstrap = \
-      ask_with_default("Use React Bootstrap for react generator? (with base predefined components)", :blue, "no") \
-      =~ /^y(es)?/i
+def apply_ui_template?
+    @apply_ui_template ||= ask_with_default("Which UI template would you like to use? (B for Bootstrap / M for Material) (with base predefined components)", :blue, "B")
 end
 
 def capistrano_app_name
@@ -113,7 +110,13 @@ end
 
 def setup_npm_packages
     npms = %w(axios json-api-normalizer)
-    npms.push("bootstrap", "reactstrap") if apply_reactstrap?
+    case apply_ui_template?
+    when 'B'
+        npms.push("bootstrap", "reactstrap")
+    when 'M'
+        npms.push("@material-ui/core", "@material-ui/icons")
+    else
+    end
     run "yarn add #{npms.join(' ')}"
 end
 
@@ -141,7 +144,15 @@ def setup_react
     git_commit("React setup")
 
     setup_component
-    setup_reactstrap if apply_reactstrap?
+
+    case apply_ui_template?
+    when 'B'
+        setup_reactstrap
+    when 'M'
+        setup_material
+    else
+    end
+
     setup_demo
 end
 
@@ -153,6 +164,10 @@ end
 def setup_reactstrap
     run 'cp -R node_modules/bootstrap/dist/css/ app/assets/stylesheets/bootstrap'
     git_commit("Reactstrap setup")
+end
+
+def setup_material
+    git_commit("Material setup")
 end
 
 def setup_demo

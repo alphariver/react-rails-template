@@ -6,7 +6,7 @@ class ReactGenerator < Rails::Generators::Base
   
     def set_up
       @controller_path = "app/controllers/#{controller_name}_controller.rb"
-      @jsx_path = "app/javascript/components/#{controller_name}/#{action_name..split('_').collect(&:capitalize).join}.jsx"
+      @jsx_path = "app/javascript/components/#{controller_name}/#{action_name.split('_').collect(&:capitalize).join}.jsx"
     end
   
     def generate_controller

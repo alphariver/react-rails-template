@@ -1,11 +1,10 @@
 import React, { Component } from 'react'
 import { DevView } from './index.js'
 import 'babel-polyfill'
-<% if apply_reactstrap? %>
+<% if apply_ui_template? %>
 import Header from './Header.jsx'
 import Footer from './Footer.jsx'
-<% end %>  
-
+<% end %>
 class App extends Component {
 
   constructor(props) {
@@ -15,15 +14,11 @@ class App extends Component {
   render() {
     return (
       <div className="appContainer">
-        <% if apply_reactstrap? %>
-          <Header />
-        <% end %>
+        <% if apply_ui_template? %><Header /><% end %>
           <div className="container">
             {this.props.children}
           </div>
-        <% if apply_reactstrap? %>
-          <Footer />
-        <% end %>
+        <% if apply_ui_template? %><Footer /><% end %>
         {(!process.env.NODE_ENV || process.env.NODE_ENV === 'development') ?
         <DevView props={this.props.appProps} /> : null}
       </div>
