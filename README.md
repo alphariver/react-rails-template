@@ -53,7 +53,7 @@ rails new blog
 
 The template will perform the following steps:
 
-1. Ask for which option you want in this proeject
+1. Ask for options you want in this proeject
   > Apply Capistrano ? / Apply Devise ? / Git remote url ? / Add server IP, username, domain, SSL configs ? (if Capistrano) / Apply UI Template ? (Bootstrap or MaterialUI)
 2. Generate your application files and directories based on given options.
 3. Add useful gems and good configs
@@ -66,7 +66,6 @@ The template will perform the following steps:
 #### Base configuration
 
 * Change the default generators config (cf config/initializers/generators.rb)
-* Setup I18n for English and Korean
 * Setup React folder structures with some out of box demo using [reactstrap][].
 * React specific generator, `rails g react posts index`. See Next section for information.
 * Improve the main layout (cf app/views/layouts/application.html.erb) to include webpack in the asset pipeline
