@@ -54,8 +54,9 @@ rails new blog
 The template will perform the following steps:
 
 1. Ask for which option you want in this proeject
-2. Generate your application files and directories
-3. Add userful gems and good configs
+  > Apply Capistrano ? / Apply Devise ? / Git remote url ? / Add server IP, username, domain, SSL configs ? (if Capistrano) / Apply UI Template ? (Bootstrap or MaterialUI)
+2. Generate your application files and directories based on given options.
+3. Add useful gems and good configs
 4. Create the development databases
 5. Commit everything to git
 6. Push the project to the remote git repository you specified
@@ -72,7 +73,8 @@ The template will perform the following steps:
 * Create a basic home_controller.rb to have something to show when the app launch
 * Create a basic HomeIndex.jsx to have something to show when the app launch
 * [react-rails][] gem for React integrity on Rails.
-* [reactstrap][] npm for base React components.
+* [reactstrap][] npm for base React components. (Option A)
+* [material-ui][] npm for base React components. (Option B)
 * [bullet][] gem to track N+1 queries. (with config)
 * [fast_jsonapi][] gem for json serializer. (with config & example)
 * [json-api-normalizer][] npm for json normaliazer. (with example)
@@ -127,7 +129,7 @@ sudo -i -u postgres
 createdb blog_production
 ```
 
-3-1. Get SSL certificate from Let's encrypt
+3-1. Get SSL certificate from Let's encrypt if you added SSL option.
 ```bash
 git clone https://github.com/letsencrypt/letsencrypt
 cd letsencrypt
@@ -160,13 +162,15 @@ cap production deploy
 ```
 
 ## Todo
-* Automate SSL cerfication generation
-* Automate Capistrano database creation
+* Automate SSL cerficate generation.
+* Automate Capistrano production database creation.
+* Rewrite devise view layers into React component.
 
 [mattbricson]: https://github.com/mattbrictson/rails-template
 [damienlethiec]: https://github.com/damienlethiec/modern-rails-template
 [react-rails]: https://github.com/reactjs/react-rails
 [reactstrap]: https://github.com/reactstrap/reactstrap
+[material-ui]: https://github.com/mui-org/material-ui
 [bullet]: https://github.com/flyerhzm/bullet
 [fast_jsonapi]: https://github.com/Netflix/fast_jsonapi
 [json-api-normalizer]: https://github.com/yury-dymov/json-api-normalizer
